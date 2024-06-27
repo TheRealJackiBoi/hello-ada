@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
 import { UserDto } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { TaskDto } from '../task/dto';
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,18 @@ export class UserService {
     const users = await this.prisma.user.findMany();
 
     return users;
+  }
+
+  async getUserTasks(userId: string): Promise<TaskDto[] | null> {
+    this.logger.log('getUserTasks');
+
+    const tasks = await this.prisma.task.findMany({
+      where: {
+        creatorId: userId,
+      },
+    });
+
+    return plainToInstance(TaskDto, tasks);
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {

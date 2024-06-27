@@ -14,16 +14,16 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() data: authDto) {
-    const user = this.authService.login(data);
+    const res = this.authService.login(data);
 
-    if (!user) {
+    if (!res) {
       throw new HttpException(
         'Login failed - email or password incorrect',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    return { status: HttpStatus.OK, token: 'token' };
+    return { status: HttpStatus.OK, token: (await res).access_token };
   }
 
   @Post('register')
